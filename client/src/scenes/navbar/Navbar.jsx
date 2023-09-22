@@ -23,7 +23,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
-import FlexBetween from "../../components/FlexBetween";
+import FlexBetween from "components/FlexBetween";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -39,7 +39,7 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  const fullName = `${user.firstName} ${user.lastName}`;
+  const fullName = `${user?.firstName} ${user?.lastName}`;
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -56,7 +56,7 @@ const Navbar = () => {
             },
           }}
         >
-          ShareHub
+          Sociopedia
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
@@ -65,16 +65,15 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search...">
-              <IconButton>
-                <Search />
-              </IconButton>
-            </InputBase>
+            <InputBase placeholder="Search..." />
+            <IconButton>
+              <Search />
+            </IconButton>
           </FlexBetween>
         )}
       </FlexBetween>
 
-      {/* DESKTOP NAVBAR  */}
+      {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
           <IconButton onClick={() => dispatch(setMode())}>
@@ -120,20 +119,19 @@ const Navbar = () => {
         </IconButton>
       )}
 
-      {/* MOBILE NAVBAR  */}
-
+      {/* MOBILE NAV */}
       {!isNonMobileScreens && isMobileMenuToggled && (
         <Box
           position="fixed"
           right="0"
           bottom="0"
           height="100%"
-          zindex="10"
+          zIndex="10"
           maxWidth="500px"
           minWidth="300px"
           backgroundColor={background}
         >
-          {/* CLOSE ICON  */}
+          {/* CLOSE ICON */}
           <Box display="flex" justifyContent="flex-end" p="1rem">
             <IconButton
               onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
@@ -142,8 +140,7 @@ const Navbar = () => {
             </IconButton>
           </Box>
 
-          {/* MENU ITEMS  */}
-
+          {/* MENU ITEMS */}
           <FlexBetween
             display="flex"
             flexDirection="column"

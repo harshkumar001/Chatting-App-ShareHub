@@ -16,65 +16,42 @@ export const register = async (req, res) => {
       occupation,
     } = req.body;
 
-    const existingUser = await User.findOne({ email: email });
-    if (existingUser) {
-      return res
-        .status(200)
-        .json({ message: "User Already Exist", success: false });
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    req.body.password = hashedPassword;
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      ...obj,
+      firstName,
+      lastName,
+      email,
+      password: passwordHash,
+      picturePath,
+      friends,
+      location,
+      occupation,
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
     });
-
     const savedUser = await newUser.save();
-
-    res
-      .status(201)
-      .json({ message: "Register Successfully", success: true, savedUser });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: `Register Controller ${error.message}`,
-    });
+    res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
-//  LOGGING IN
+/* LOGGING IN */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
+    if (!user) return res.status(400).json({ msg: "User does not exist. " });
 
-    if (!user) {
-      // return res;
-      // .status(400)
-      // .send({ message: "User Not Found", success: false });
-      return res
-        .status(400)
-        .json({ message: "User Not Found", success: false });
-    }
     const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials. " });
 
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid Email or Password" });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     delete user.password;
-    res.status(200).json({ message: "Login Success", success: true, token });
-  } catch (error) {
-    console.log("Error in Login Controller", error);
-    res
-      .status(500)
-      .json({ message: `Error in Login Controller ${error.message}` });
+    res.status(200).json({ token, user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

@@ -4,7 +4,7 @@ import {
   getUserFriends,
   addRemoveFriend,
 } from "../controllers/usersController.js";
-import { verifyToken } from "../middleware/authMiddleware";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
